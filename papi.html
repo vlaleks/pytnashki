@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+
+<HTML>
+
+<HEAD>
+
+<META charset=utf-8>
+
+</HEAD>
+
+<BODY>
+
+<STYLE>
+
+td {width:50px;height:50px}
+
+</STYLE>
+
+<H1 align=center>15<BR><INPUT type=button value=Рестарт onclick=beg()>
+
+</H1>
+
+<TABLE align=center id=board style="text-align:center;font-size:xx-large;
+
+" border=4 solid black onclick=swap()>
+
+<TR><TD>1</TD><TD>2</TD><TD>3</TD><TD>4</TD></TR>
+
+<TR><TD>5</TD><TD>6</TD><TD>7</TD><TD>8</TD></TR>
+
+<TR><TD>9</TD><TD>10</TD><TD>11</TD><TD>12</TD></TR>
+
+<TR><TD>13</TD><TD>14</TD><TD>15</TD><TD></TD></TR>
+
+</TABLE>
+
+<SCRIPT>
+
+
+var b 
+
+var r
+
+var emp
+
+b=document.getElementById("board") /////////Игровое поле
+
+b.bgColor="lime" /////////цвет собраного поля
+
+r=b.getElementsByTagName("TR") /////////Строки таблицы
+
+emp=new Object() /////////Пустая ячейка
+
+emp.r=3
+
+emp.c=3
+
+function beg(){ ///////// Перемешивание ячеек
+
+for(changes=0;changes<100;changes++){
+
+emp.el=r[emp.r].getElementsByTagName("TD")[emp.c] /////////Пустая ячейка элемент DOM
+
+next_cells=[] //Список доступных ячеек
+
+if((emp.r-1)>=0)next_cells.push({r:emp.r-1,c:emp.c}) /////////Заполнение списка доступных ячеек
+
+if((emp.r+1)<4)next_cells.push({r:emp.r+1,c:emp.c})
+
+if((emp.c-1)>=0)next_cells.push({r:emp.r,c:emp.c-1})
+
+if((emp.c+1)<4)next_cells.push({r:emp.r,c:emp.c+1})
+
+new_index=Math.floor(Math.random()*next_cells.length) /////////случайная ячейка из списка доступных
+
+if(new_index>=next_cells.length)continue
+
+new_element=
+
+r[next_cells[new_index].r].getElementsByTagName("TD")[next_cells[new_index].c] ///////// Элемент, который будет меняться с пустой ячейкой
+
+///////// Обмен занчениями ячеек (сдвиг)
+
+el=emp.el.innerHTML
+
+emp.el.innerHTML=new_element.innerHTML
+
+new_element.innerHTML=el
+
+/////////Установка новой пустой ячейки
+
+emp.r=next_cells[new_index].r
+
+emp.c=next_cells[new_index].c
+
+emp.el=r[emp.r].getElementsByTagName("TD")[emp.c]
+
+}
+
+b.bgColor="lightgray" ///////// Перемешанная таблица имеет серый цвет
+
+}
+
+function swap(){ ///////// сдвиг ячейки на которую кликнули
+
+e=event.target ///////// ячейка на которую кликнули
+
+if(!(/td/i).test(e.tagName))return ///////// если кликнули не ячейку то возврат
+
+row=e.parentElement.rowIndex ///////// ряд и колонка ячейки на которую кликнули
+
+col=e.cellIndex
+
+stop=true ///////// stop=true - нельзя менять эту ячейку и пустую
+
+if(stop&&(row+1)==emp.r&&col==emp.c)stop=false
+
+if(stop&&(row-1)==emp.r&&col==emp.c)stop=false
+
+if(stop&&row==emp.r&&(col+1)==emp.c)stop=false
+
+if(stop&&row==emp.r&&(col-1)==emp.c)stop=false
+
+if(stop)return
+
+//////////////// сдвиг
+
+el=emp.el.innerHTML
+
+emp.el.innerHTML=e.innerHTML
+
+e.innerHTML=el
+
+emp.r=row ///////// Новая пустая ячейка
+
+emp.c=col
+
+emp.el=r[emp.r].getElementsByTagName("TD")[emp.c]
+
+if(is_finished())b.bgColor="lime"
+
+}
+
+function is_finished(){ ////////////// проверка правильности сборки поля
+
+bad=false
+
+for(i=0;i<4;i++){
+
+cells=r[i].getElementsByTagName("TD")
+
+for(j=0;j<4;j++){
+
+if(i==3&&j==3)break ///////// если последняя ячейка, то выход
+
+if(cells[j].innerHTML!==(i*4+j+1).toString(10)){bad=true;break} ///////// текстовое значение ячейки должно быть равно вычисленному
+
+}
+
+if(bad)break
+
+}
+
+return !bad}
+
+</SCRIPT>
+
+</BODY>
+</HTML>
